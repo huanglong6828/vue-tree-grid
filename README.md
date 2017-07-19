@@ -1,9 +1,9 @@
 # tree-grid
 
 > 基于vue1.0和iview1.0.1组件库的树型表格
-  主要使用了 iview:checkbox组件 icon组件 同时部分表格渲染模仿iview表格 支持[iview](https://github.com/iview/iview) 
-## [DEMO](https://huanglong6828.github.io/vue-tree-grid/dist/)
-   
+  主要使用了 iview(checkbox组件 icon组件) 同时部分表格渲染模仿iview表格 支持[iview](https://github.com/iview/iview) 
+
+### [DEMO](https://huanglong6828.github.io/vue-tree-grid/dist/) 如果对您如果有帮助的话,给颗星谢谢
 ## API
 ### props
 | 属性        | 说明           | 类型  |
