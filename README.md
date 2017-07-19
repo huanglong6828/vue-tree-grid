@@ -2,20 +2,28 @@
 
 > 基于vue1.0和iview1.0.1组件库的树型表格
   主要使用了 iview:checkbox组件 icon组件 同时部分表格渲染模仿iview表格 支持[iview](https://github.com/iview/iview) 
-  
+## [DEMO](https://huanglong6828.github.io/vue-tree-grid/dist/)
+   
 ## API
-``` bash
-  #props
-      items 显示的结构化数据
-      columns 表格列的配置描述 
-          sortable:true 开启排序功能
-          type: 'selection'多选功能 
-          type: 'action' 操作功能 必填参数:actions:[{}]
-  #events
-      @on-row-click 单击行或者单击操作按钮方法 返回当前行数据,$event,index
-      @on-selection-change  多选模式下 选中项变化时触发  返回选中数组
-      @on-sort-change  排序时有效，当点击排序时触发 返回key和排序规则
-```
+### props
+| 属性        | 说明           | 类型  |
+| ------------- |:-------------:| -----:|
+| items| 显示的结构化数据|Array|
+| columns| 表格列的配置描述|Array|
+
+### columns 
+| 属性        | 说明           | 类型 | 默认值|
+| ------------- |:-------------:| -----:|-----:|
+| sortable| 排序功能|Boolean|false|
+| type|'selection':多选功能|String|#
+| type|'action' 操作功能,  必填参数:actions:[{}]|String|#
+
+ ### events
+| 事件名        | 说明           | 返回值  |
+| ------------- |:-------------:| -----:|
+| @on-row-click| 单击行或者单击操作按钮方法|data,$event,index|
+| @on-selection-change|返回选中数组 |arr|       | @on-sort-change | 表格列的配置描述|返回key和排序规则|
+
 
 ## 使用方式
 
