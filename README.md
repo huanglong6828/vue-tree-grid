@@ -22,7 +22,8 @@
 | 事件名        | 说明           | 返回值  |
 | ------------- |:-------------:| -----:|
 | @on-row-click| 单击行或者单击操作按钮方法|data,$event,index|
-| @on-selection-change|返回选中数组 |arr|       | @on-sort-change | 表格列的配置描述|返回key和排序规则|
+| @on-selection-change|返回选中数组 |arr|       
+| @on-sort-change | 表格列的配置描述|返回key和排序规则|
 
 
 ## 使用方式
