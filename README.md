@@ -1,9 +1,17 @@
 # tree-grid
 
-> 基于vue1.0和iview1.0.1组件库的树型表格
-  主要使用了 iview(checkbox组件 icon组件) 同时部分表格渲染模仿iview表格 支持[iview](https://github.com/iview/iview) 
+> 基于vue和iview组件库的树型表格
+  主要使用了 iview(checkbox组件,icon组件,button组件) 同时部分表格渲染模仿iview表格 支持[iview](https://github.com/iview/iview) 
 
 ### [DEMO](https://huanglong6828.github.io/vue-tree-grid/dist/) 如果对您如果有帮助的话,给颗星谢谢
+
+## 版本支持
+> VUE1.0/2.0 使用时请下载对应iview
+
+
+## 自适应功能新增
+    1. width 字段增加
+    2. td总和大于容器宽宽度 出现滚动条 否则表格自适应
 ## API
 ### props
 | 属性        | 说明           | 类型  |
@@ -13,17 +21,20 @@
 
 ### columns 
 | 属性        | 说明           | 类型 | 默认值|
-| ------------- |:-------------:| -----:|-----:|
-| sortable| 排序功能|Boolean|false|
-| type|'selection':多选功能|String|#
-| type|'action' 操作功能,  必填参数:actions:[{}]|String|#
+| ----------- |:--------------:| -----:|-----:|
+| title       | 列头显示文字       |String |#    |
+| key         | 对应列内容的字段名 |String |#    |
+| width       | 列宽名             |Number |#    |
+| sortable    | 排序功能           |Boolean|false|
+| type        |'selection':多选功能|String|# |
+| type        |'action' 操作功能,  必填参数:actions:[{}]|String|#
 
  ### events
 | 事件名        | 说明           | 返回值  |
-| ------------- |:-------------:| -----:|
-| @on-row-click| 单击行或者单击操作按钮方法|data,$event,index|
-| @on-selection-change|返回选中数组 |arr|       
-| @on-sort-change | 表格列的配置描述|返回key和排序规则|
+| ------------- |:--------------:| -------:|
+| @on-row-click       | 单击行或者单击操作按钮方法|data,$event,index|
+| @on-selection-change| 返回选中数组              |arr|       
+| @on-sort-change     | 表格列的配置描述          |key和排序规则(值为 asc 或 desc)|
 
 
 ## 使用方式
@@ -44,27 +55,36 @@
         data() {
             return {
                 columns: [{
-                    type: 'selection'
+                    type: 'selection',
+                    width: '50',
                 }, {
                     title: '编码',
                     key: 'code',
-                    sortable: true
+                    sortable: true,
+                    width: '150',
                 }, {
                     title: '名称',
-                    key: 'name'
+                    key: 'name',
+                    width: '150',
                 }, {
                     title: '状态',
-                    key: 'status'
+                    key: 'status',
+                    width: '150',
                 }, {
                     title: '备注',
-                    key: 'remark'
+                    key: 'remark',
+                    width: '150',
                 }, {
                     title: '操作',
                     type: 'action',
                     actions: [{
                         type: 'primary',
                         text: '编辑'
-                    }]
+                    }, {
+                        type: 'error',
+                        text: '删除'
+                    }],
+                    width: '150',
                 }],
                 data: [{
                     id: '1',
