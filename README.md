@@ -3,7 +3,7 @@
 > 基于vue和iview组件库的树型表格
   主要使用了 iview(checkbox组件,icon组件,button组件) 同时部分表格渲染模仿iview表格 支持[iview](https://github.com/iview/iview) 
 
-### [DEMO](https://huanglong6828.github.io/vue-tree-grid/dist/) 如果对您如果有帮助的话,给颗星谢谢
+### [DEMO](https://huanglong6828.github.io/vue-tree-grid/dist/index.html) 如果对您如果有帮助的话,给颗星谢谢
 
 ## 版本支持
 > VUE1.0/2.0 使用时请下载对应iview
