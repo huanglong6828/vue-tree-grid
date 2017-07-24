@@ -271,8 +271,8 @@
             Length(data) {
                 let length = data.length
                 data.forEach((child) => {
-                    if (child.child_orders) {
-                        length += this.Length(child.child_orders)
+                    if (child.children) {
+                        length += this.Length(child.children)
                     }
                 })
                 return length;
