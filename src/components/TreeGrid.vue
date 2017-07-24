@@ -205,11 +205,12 @@
                             item.children.forEach((child, childIndex) => {
                                 this.initItems.splice((index + childIndex + 1), 0, child);
                                 //设置监听属性
-                                this.$set(this.initItems[index + childIndex + 1], 'parent', item);
-                                this.$set(this.initItems[index + childIndex + 1], 'level', level);
-                                this.$set(this.initItems[index + childIndex + 1], 'spaceHtml', spaceHtml);
-                                this.$set(this.initItems[index + childIndex + 1], 'isShow', true);
-                                this.$set(this.initItems[index + childIndex + 1], 'expanded', false);
+                                this.initItems[index + childIndex + 1].parent = item
+                                this.initItems[index + childIndex + 1].level = level
+                                this.initItems[index + childIndex + 1].spaceHtml = spaceHtml
+                                this.initItems[index + childIndex + 1].isShow = true
+                                this.initItems[index + childIndex + 1].expanded = false
+                                this.initItems.$set(index + childIndex + 1, this.initItems[index + childIndex + 1])
                             })
                         }
                     }
