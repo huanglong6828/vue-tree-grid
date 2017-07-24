@@ -39,9 +39,9 @@
                     </div>
                     <label @click="toggle(index,item)" v-if="!column.type">
                         <span v-if='snum==1'>
+                            <i v-html='item.spaceHtml'></i>
                             <i v-if="item.children&&item.children.length>0" class="ivu-icon" :class="{'ivu-icon-plus-circled':!item.expanded,'ivu-icon-minus-circled':item.expanded }"></i>
                             <i v-else class="ms-tree-space"></i>
-                            <i v-html='item.spaceHtml'></i>
                         </span> {{renderBody(item,column) }}
                     </label>  
                 </td>
@@ -55,7 +55,12 @@
         name: 'treeGrid',
         props: {
             columns: Array,
-            items: Array,
+            items: {
+                type: Array,
+                default: function() {
+                    return [];
+                }
+            }
         },
         data() {
             return {
@@ -66,6 +71,7 @@
                 screenWidth: document.body.clientWidth, //自适应宽
                 tdsWidth: 0, //td总宽
                 timer: false, //控制监听时长
+                dataLength: 0, //树形数据长度
             }
         },
         computed: {
@@ -85,8 +91,10 @@
             },
             items() {
                 if (this.items) {
+                    this.dataLength = this.Length(this.items)
+                    this.initItems = this.deepCopy(this.items)
                     this.checks = false;
-                    this.initData(this.items, 1, null);
+                    this.initData(this.initItems, 1, null);
                 }
             },
             columns: {
@@ -98,7 +106,9 @@
         },
         mounted() {
             if (this.items) {
-                this.initData(this.items, 1, null);
+                this.dataLength = this.Length(this.items)
+                this.initItems = this.deepCopy(this.items)
+                this.initData(this.initItems, 1, null);
                 this.cloneColumns = this.makeColumns();
             }
             // 绑定onresize事件 监听屏幕变化设置宽
@@ -147,7 +157,6 @@
             },
             // 数据处理 增加自定义属性监听
             initData(items, level, parent) {
-                this.initItems = []
                 let spaceHtml = "";
                 for (var i = 1; i < level; i++) {
                     spaceHtml += "<i class='ms-tree-space'></i>"
@@ -190,43 +199,32 @@
                 if (item.children) {
                     if (item.expanded) {
                         item.expanded = !item.expanded;
-                        this.close(index, item);
+                        this.openClose(index, item);
                     } else {
                         item.expanded = !item.expanded;
                         if (item.load) {
-                            this.open(index, item);
+                            this.openClose(index, item);
                         } else {
                             item.load = true;
                             item.children.forEach((child, childIndex) => {
                                 this.initItems.splice((index + childIndex + 1), 0, child);
-                                this.initItems[index + childIndex + 1] = Object.assign({}, this.initItems[index + childIndex + 1], {
-                                    'parent': item,
-                                    'level': level,
-                                    'spaceHtml': spaceHtml,
-                                    'isShow': true,
-                                    'expanded': false
-                                })
+                                //设置监听属性
+                                this.$set(this.initItems[index + childIndex + 1], 'parent', item);
+                                this.$set(this.initItems[index + childIndex + 1], 'level', level);
+                                this.$set(this.initItems[index + childIndex + 1], 'spaceHtml', spaceHtml);
+                                this.$set(this.initItems[index + childIndex + 1], 'isShow', true);
+                                this.$set(this.initItems[index + childIndex + 1], 'expanded', false);
                             })
                         }
                     }
                 }
             },
-            open(index, item) {
+            openClose(index, item) {
                 if (item.children) {
                     item.children.forEach((child, childIndex) => {
-                        child.isShow = true;
+                        child.isShow = !child.isShow;
                         if (child.children) {
-                            this.open(index + childIndex + 1, child.children);
-                        }
-                    })
-                }
-            },
-            close(index, item) {
-                if (item.children) {
-                    item.children.forEach((child, childIndex) => {
-                        child.isShow = false;
-                        if (child.children) {
-                            this.close(index + childIndex + 1, child.children);
+                            this.openClose(index + childIndex + 1, child.children);
                         }
                     })
                 }
@@ -235,14 +233,27 @@
             handleCheckAll() {
                 this.checks = !this.checks;
                 if (this.checks) {
-                    this.checkGroup = this.checkGroup.concat(this.All(this.items));
+                    this.checkGroup = this.getArray(this.checkGroup.concat(this.All(this.items)))
                 } else {
                     this.checkGroup = []
                 }
                 this.$emit('on-selection-change', this.checkGroup)
             },
+            // 数组去重
+            getArray(a) {
+                var hash = {},
+                    len = a.length,
+                    result = [];
+                for (var i = 0; i < len; i++) {
+                    if (!hash[a[i]]) {
+                        hash[a[i]] = true;
+                        result.push(a[i]);
+                    }
+                }
+                return result;
+            },
             checkAllGroupChange(data) {
-                if (data.length === this.items.length) {
+                if (data.length === this.dataLength) {
                     this.checks = true;
                 } else {
                     this.checks = false;
@@ -259,6 +270,16 @@
                 })
                 return arr
             },
+            // 返回树形数据长度
+            Length(data) {
+                let length = data.length
+                data.forEach((child) => {
+                    if (child.child_orders) {
+                        length += this.Length(child.child_orders)
+                    }
+                })
+                return length;
+            },
             // 返回表头
             renderHeader(column, $index) {
                 if ('renderHeader' in this.columns[$index]) {
@@ -272,6 +293,7 @@
             renderBody(row, column, index) {
                 return row[column.key]
             },
+            // 深度拷贝函数
             deepCopy(data) {
                 var t = this.type(data),
                     o, i, ni;
