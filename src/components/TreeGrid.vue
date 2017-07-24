@@ -12,6 +12,7 @@
             type: 'selection'为多选功能 type: 'action' 为操作功能 actions:[{}] 操作按钮
  -->
 <template>
+<div :style="{width:tableWidth}" class='autoTbale'>
 <table class="table table-bordered" id='hl-tree-table'>
     <thead>
         <tr>
@@ -29,7 +30,7 @@
     </thead>
     <tbody>
         <tr v-for="(index, item) in initItems" v-show="show(item)" :class="{'child-tr':item.parent}" >
-            <td v-for="column in columns">
+            <td v-for="column in columns" :style=tdWidth(column.width)>
                 <Checkbox-group :model.sync="checkGroup" @on-change="checkAllGroupChange" v-if="column.type === 'selection'">
                     <Checkbox :value="item.id"><span style="display:none;">&nbsp;</span></Checkbox>
                 </Checkbox-group>
@@ -38,15 +39,16 @@
                 </div>
                 <label @click="toggle(index,item)" v-if="!column.type">
                     <span v-if='$index==1'>
+                        {{{item.spaceHtml}}}
                         <i v-if="item.children&&item.children.length>0" class="ivu-icon" :class="{'ivu-icon-plus-circled':!item.expanded,'ivu-icon-minus-circled':item.expanded }"></i>
                         <i v-else class="ms-tree-space"></i>
-                        {{{item.spaceHtml}}} 
                     </span> {{{renderBody(item,column) }}}
                 </label>
             </td>
         </tr>
     </tbody>
 </table>
+</div>
 </template>
 <script>
     export default {
@@ -61,11 +63,31 @@
                 cloneColumns: [], //处理后的表头数据
                 checkGroup: [], //复选框数组
                 checks: false, //全选
+                screenWidth: 0, //自适应宽
+                tdsWidth: 0, //td总宽
+                timer: false, //控制监听时长
+                dataLength: 0, //树形数据长度
+            }
+        },
+        computed: {
+            tableWidth() {
+                return this.tdsWidth > this.screenWidth && this.screenWidth > 0 ? this.screenWidth + 'px' : '100%'
             }
         },
         watch: {
+            screenWidth(val) {
+                if (!this.timer) {
+                    this.screenWidth = val
+                    this.timer = true
+                    setTimeout(() => {
+                        this.timer = false
+                    }, 400)
+                }
+            },
             items() {
                 if (this.items) {
+                    this.dataLength = this.Length(this.items)
+                    this.initItems = deepCopy(this.items)
                     this.checks = false;
                     this.initData(this.items, 1, null);
                 }
@@ -79,11 +101,29 @@
         },
         ready() {
             if (this.items) {
+                this.dataLength = this.Length(this.items)
+                this.initItems = deepCopy(this.items)
                 this.initData(this.items, 1, null);
                 this.cloneColumns = this.makeColumns();
             }
+            /// 绑定onresize事件 监听屏幕变化设置宽
+            this.$nextTick(() => {
+                this.screenWidth = document.body.clientWidth
+            })
+            window.onresize = () => {
+                return (() => {
+                    window.screenWidth = document.body.clientWidth
+                    this.screenWidth = window.screenWidth
+                })()
+            }
         },
         methods: {
+            // 设置td宽度
+            tdWidth(val) {
+                if (val) return {
+                    'min-width': val + 'px'
+                }
+            },
             // 排序事件
             handleSort(index, type) {
                 this.cloneColumns.forEach((col) => col._sortType = 'normal');
@@ -164,34 +204,23 @@
                             item.load = true;
                             item.children.forEach((child, childIndex) => {
                                 this.initItems.splice((index + childIndex + 1), 0, child);
-                                this.initItems[index + childIndex + 1] = Object.assign({}, this.initItems[index + childIndex + 1], {
-                                    'parent': item,
-                                    'level': level,
-                                    'spaceHtml': spaceHtml,
-                                    'isShow': true,
-                                    'expanded': false
-                                })
+                                //设置监听属性
+                                this.$set(this.initItems[index + childIndex + 1], 'parent', item);
+                                this.$set(this.initItems[index + childIndex + 1], 'level', level);
+                                this.$set(this.initItems[index + childIndex + 1], 'spaceHtml', spaceHtml);
+                                this.$set(this.initItems[index + childIndex + 1], 'isShow', true);
+                                this.$set(this.initItems[index + childIndex + 1], 'expanded', false);
                             })
                         }
                     }
                 }
             },
-            open(index, item) {
+            openClose(index, item) {
                 if (item.children) {
                     item.children.forEach((child, childIndex) => {
-                        child.isShow = true;
+                        child.isShow = !child.isShow;
                         if (child.children) {
-                            this.open(index + childIndex + 1, child.children);
-                        }
-                    })
-                }
-            },
-            close(index, item) {
-                if (item.children) {
-                    item.children.forEach((child, childIndex) => {
-                        child.isShow = false;
-                        if (child.children) {
-                            this.close(index + childIndex + 1, child.children);
+                            this.openClose(index + childIndex + 1, child.children);
                         }
                     })
                 }
@@ -200,11 +229,24 @@
             handleCheckAll() {
                 this.checks = !this.checks;
                 if (this.checks) {
-                    this.checkGroup = this.checkGroup.concat(this.All(this.items));
+                    this.checkGroup = this.getArray(this.checkGroup.concat(this.All(this.items)));
                 } else {
                     this.checkGroup = []
                 }
                 this.$emit('on-selection-change', this.checkGroup)
+            },
+            // 数组去重
+            getArray(a) {
+                var hash = {},
+                    len = a.length,
+                    result = [];
+                for (var i = 0; i < len; i++) {
+                    if (!hash[a[i]]) {
+                        hash[a[i]] = true;
+                        result.push(a[i]);
+                    }
+                }
+                return result;
             },
             checkAllGroupChange(data) {
                 if (data.length === this.items.length) {
@@ -223,6 +265,16 @@
                     }
                 })
                 return arr
+            },
+            // 返回树形数据长度
+            Length(data) {
+                let length = data.length
+                data.forEach((child) => {
+                    if (child.child_orders) {
+                        length += this.Length(child.child_orders)
+                    }
+                })
+                return length;
             },
             // 返回表头
             renderHeader(column, $index) {
@@ -280,6 +332,9 @@
     }
 </script>
 <style>
+    .autoTbale {
+        overflow: auto;
+    }
     table {
         width:100%;
         border-spacing: 0;
