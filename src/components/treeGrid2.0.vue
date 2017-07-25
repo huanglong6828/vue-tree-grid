@@ -205,11 +205,11 @@
                 if (item.children) {
                     if (item.expanded) {
                         item.expanded = !item.expanded;
-                        this.openClose(index, item);
+                        this.close(index, item);
                     } else {
                         item.expanded = !item.expanded;
                         if (item.load) {
-                            this.openClose(index, item);
+                            this.open(index, item);
                         } else {
                             item.load = true;
                             item.children.forEach((child, childIndex) => {
@@ -225,12 +225,22 @@
                     }
                 }
             },
-            openClose(index, item) {
+            open(index, item) {
                 if (item.children) {
                     item.children.forEach((child, childIndex) => {
-                        child.isShow = !child.isShow;
+                        child.isShow = true;
+                        if (child.children && child.expanded) {
+                            this.open(index + childIndex + 1, child);
+                        }
+                    })
+                }
+            },
+            close(index, item) {
+                if (item.children) {
+                    item.children.forEach((child, childIndex) => {
+                        child.isShow = false;
                         if (child.children) {
-                            this.openClose(index + childIndex + 1, child.children);
+                            this.close(index + childIndex + 1, child);
                         }
                     })
                 }
