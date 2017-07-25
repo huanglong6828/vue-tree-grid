@@ -51,6 +51,7 @@
 </div>
 </template>
 <script>
+    import Vue from 'vue'
     export default {
         name: 'treeGrid',
         props: {
@@ -211,23 +212,32 @@
                             item.children.forEach((child, childIndex) => {
                                 this.initItems.splice((index + childIndex + 1), 0, child);
                                 //设置监听属性
-                                this.initItems[index + childIndex + 1].parent = item
-                                this.initItems[index + childIndex + 1].level = level
-                                this.initItems[index + childIndex + 1].spaceHtml = spaceHtml
-                                this.initItems[index + childIndex + 1].isShow = true
-                                this.initItems[index + childIndex + 1].expanded = false
-                                this.initItems.$set(index + childIndex + 1, this.initItems[index + childIndex + 1])
+                                Vue.set(this.initItems[index + childIndex + 1], 'parent', item);
+                                Vue.set(this.initItems[index + childIndex + 1], 'level', level);
+                                Vue.set(this.initItems[index + childIndex + 1], 'spaceHtml', spaceHtml);
+                                Vue.set(this.initItems[index + childIndex + 1], 'isShow', true);
+                                Vue.set(this.initItems[index + childIndex + 1], 'expanded', false);
                             })
                         }
                     }
                 }
             },
-            openClose(index, item) {
+            open(index, item) {
                 if (item.children) {
                     item.children.forEach((child, childIndex) => {
-                        child.isShow = !child.isShow;
+                        child.isShow = true;
+                        if (child.children && child.expanded) {
+                            this.open(index + childIndex + 1, child);
+                        }
+                    })
+                }
+            },
+            close(index, item) {
+                if (item.children) {
+                    item.children.forEach((child, childIndex) => {
+                        child.isShow = false;
                         if (child.children) {
-                            this.openClose(index + childIndex + 1, child.children);
+                            this.close(index + childIndex + 1, child);
                         }
                     })
                 }
