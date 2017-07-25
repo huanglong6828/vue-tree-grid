@@ -136,7 +136,13 @@
             },
             // 点击某一行事件
             RowClick(data, event, index) {
-                this.$emit('on-row-click', data, event, index)
+                let result = {}
+                for (let t in data) {
+                    if (t != 'spaceHtml' && t != 'parent' && t != 'level' && t != 'expanded' && t != 'isShow' && t != 'load') {
+                        result[t] = data[t]
+                    }
+                }
+                this.$emit('on-row-click', result, event, index)
             },
             // 处理表头数据
             makeColumns() {
