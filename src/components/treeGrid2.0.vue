@@ -350,6 +350,9 @@
                 return map[toString.call(obj)];
             }
         },
+        beforeDestroy() {
+            window.onresize = null
+        }
     }
 </script>
 <style>
