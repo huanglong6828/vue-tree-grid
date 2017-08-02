@@ -35,7 +35,7 @@
                         <Checkbox :label="item.id"><span style="display:none;">&nbsp;</span></Checkbox>
                     </Checkbox-group>
                     <div v-if="column.type === 'action'">
-                         <i-button :type="action.type" size="small" @click="RowClick(item,$event,index)" v-for='action in (column.actions)' :key='column.text'>{{action.text}}</i-button> 
+                         <i-button :type="action.type" size="small" @click="RowClick(item,$event,index,action.text)" v-for='action in (column.actions)' :key='column.text'>{{action.text}}</i-button> 
                     </div>
                     <label @click="toggle(index,item)" v-if="!column.type">
                         <span v-if='snum==1'>
@@ -138,14 +138,34 @@
                 this.$emit('on-sort-change', this.cloneColumns[index]['key'], this.cloneColumns[index]['_sortType'])
             },
             // 点击某一行事件
-            RowClick(data, event, index) {
-                let result = {}
-                for (let t in data) {
-                    if (t != 'spaceHtml' && t != 'parent' && t != 'level' && t != 'expanded' && t != 'isShow' && t != 'load') {
-                        result[t] = data[t]
+            RowClick(data, event, index, text) {
+                let result = this.makeData(data)
+                this.$emit('on-row-click', result, event, index, text)
+            },
+            // 点击事件 返回数据处理
+            makeData(data) {
+                const t = typeOf(data);
+                let o;
+                if (t === 'array') {
+                    o = [];
+                } else if (t === 'object') {
+                    o = {};
+                } else {
+                    return data;
+                }
+
+                if (t === 'array') {
+                    for (let i = 0; i < data.length; i++) {
+                        o.push(this.makeData(data[i]));
                     }
-                }        
-                this.$emit('on-row-click', result, event, index)
+                } else if (t === 'object') {
+                    for (let i in data) {
+                        if (i != 'spaceHtml' && i != 'parent' && i != 'level' && i != 'expanded' && i != 'isShow' && i != 'load') {
+                            o[i] = this.makeData(data[i]);
+                        }
+                    }
+                }
+                return o;
             },
             // 处理表头数据
             makeColumns() {
