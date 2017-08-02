@@ -181,6 +181,7 @@
             },
             // 数据处理 增加自定义属性监听
             initData(items, level, parent) {
+                this.initItems = []
                 let spaceHtml = "";
                 for (var i = 1; i < level; i++) {
                     spaceHtml += "<i class='ms-tree-space'></i>"
