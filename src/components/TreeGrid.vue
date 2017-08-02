@@ -88,9 +88,8 @@
             items() {
                 if (this.items) {
                     this.dataLength = this.Length(this.items)
-                    this.initItems = deepCopy(this.items)
                     this.checks = false;
-                    this.initData(this.items, 1, null);
+                    this.initData(this.deepCopy(this.items), 1, null);
                 }
             },
             columns: {
@@ -103,8 +102,7 @@
         ready() {
             if (this.items) {
                 this.dataLength = this.Length(this.items)
-                this.initItems = deepCopy(this.items)
-                this.initData(this.items, 1, null);
+                this.initData(this.deepCopy(this.items), 1, null);
                 this.cloneColumns = this.makeColumns();
             }
             /// 绑定onresize事件 监听屏幕变化设置宽
@@ -137,18 +135,37 @@
             },
             // 点击某一行事件
             RowClick(data, event, index) {
-                let result = {}
-                for (let t in data) {
-                    if (t != 'spaceHtml' && t != 'parent' && t != 'level' && t != 'expanded' && t != 'isShow' && t != 'load') {
-                        result[t] = data[t]
+                let result = this.makeData(data)
+                this.$emit('on-row-click', result, event, index, text)
+            },
+            // 点击事件 返回数据处理
+            makeData(data) {
+                const t = typeOf(data);
+                let o;
+                if (t === 'array') {
+                    o = [];
+                } else if (t === 'object') {
+                    o = {};
+                } else {
+                    return data;
+                }
+
+                if (t === 'array') {
+                    for (let i = 0; i < data.length; i++) {
+                        o.push(this.makeData(data[i]));
+                    }
+                } else if (t === 'object') {
+                    for (let i in data) {
+                        if (i != 'spaceHtml' && i != 'parent' && i != 'level' && i != 'expanded' && i != 'isShow' && i != 'load') {
+                            o[i] = this.makeData(data[i]);
+                        }
                     }
                 }
-                this.$emit('on-row-click', result, event, index)
+                return o;
             },
             // 处理表头数据
             makeColumns() {
                 let columns = this.deepCopy(this.columns);
-
                 columns.forEach((column, index) => {
                     column._index = index;
                     column._width = column.width ? column.width : '';
