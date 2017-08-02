@@ -35,7 +35,7 @@
                     <Checkbox :value="item.id"><span style="display:none;">&nbsp;</span></Checkbox>
                 </Checkbox-group>
                 <div v-if="column.type === 'action'">
-                    <i-button :type="action.type" size="small" @click="RowClick(item,index,$event)" v-for='action in column.actions'>{{action.text}}</i-button>
+                    <i-button :type="action.type" size="small" @click="RowClick(item,index,$event,action.text)" v-for='action in column.actions'>{{action.text}}</i-button>
                 </div>
                 <label @click="toggle(index,item)" v-if="!column.type">
                     <span v-if='$index==1'>
@@ -134,7 +134,7 @@
                 this.$emit('on-sort-change', this.cloneColumns[index]['key'], this.cloneColumns[index]['_sortType'])
             },
             // 点击某一行事件
-            RowClick(data, event, index) {
+            RowClick(data, event, index,text) {
                 let result = this.makeData(data)
                 this.$emit('on-row-click', result, event, index, text)
             },
