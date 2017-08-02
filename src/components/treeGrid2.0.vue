@@ -92,9 +92,8 @@
             items() {
                 if (this.items) {
                     this.dataLength = this.Length(this.items)
-                    this.initItems = this.deepCopy(this.items)
                     this.checks = false;
-                    this.initData(this.initItems, 1, null);
+                    this.initData(this.deepCopy(this.items), 1, null);
                 }
             },
             columns: {
@@ -107,8 +106,7 @@
         mounted() {
             if (this.items) {
                 this.dataLength = this.Length(this.items)
-                this.initItems = this.deepCopy(this.items)
-                this.initData(this.initItems, 1, null);
+                this.initData(this.deepCopy(this.items), 1, null);
                 this.cloneColumns = this.makeColumns();
             }
             // 绑定onresize事件 监听屏幕变化设置宽
