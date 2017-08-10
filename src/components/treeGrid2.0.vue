@@ -92,6 +92,7 @@
             items() {
                 if (this.items) {
                     this.dataLength = this.Length(this.items)
+                    this.checkGroup = []
                     this.checks = false;
                     this.initData(this.deepCopy(this.items), 1, null);
                 }
