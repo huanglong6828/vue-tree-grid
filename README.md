@@ -147,11 +147,14 @@
     }
 </script>
 ```
-## Build Setup
+## 使用方式
 ``` bash
-# install dependencies
-npm install
+# 安装依赖
+npm install iview
 
-# serve with hot reload at localhost:8080
-npm run dev
+main.js 引入
+ import iView from 'iview';
+ import 'iview/dist/styles/iview.css';
+ Vue.use(iView);
+# treeGird 放入工程项目
 ```
