@@ -156,5 +156,6 @@ main.js 引入
  import iView from 'iview';
  import 'iview/dist/styles/iview.css';
  Vue.use(iView);
-# treeGird 放入工程项目
+ 
+treeGird 放入工程项目 例如 components/treeGird
 ```
