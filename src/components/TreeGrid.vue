@@ -88,9 +88,13 @@
             items() {
                 if (this.items) {
                     this.dataLength = this.Length(this.items)
-                    this.checkGroup = []
-                    this.checks = false;
                     this.initData(this.deepCopy(this.items), 1, null);
+                    this.checkGroup = this.renderCheck(this.items)
+                    if (this.checkGroup.length == this.dataLength) {
+                        this.checks = true
+                    } else {
+                        this.checks = false
+                    }
                 }
             },
             columns: {
@@ -105,6 +109,12 @@
                 this.dataLength = this.Length(this.items)
                 this.initData(this.deepCopy(this.items), 1, null);
                 this.cloneColumns = this.makeColumns();
+                this.checkGroup = this.renderCheck(this.items)
+                if (this.checkGroup.length == this.dataLength) {
+                    this.checks = true
+                } else {
+                    this.checks = false
+                }
             }
             /// 绑定onresize事件 监听屏幕变化设置宽
             this.$nextTick(() => {
@@ -323,6 +333,19 @@
             // 返回内容
             renderBody(row, column, index) {
                 return row[column.key]
+            },
+            // 默认选中
+            renderCheck(data) {
+                let arr = []
+                data.forEach((item) => {
+                    if (item._checked) {
+                        arr.push(item.id)
+                    }
+                    if (item.children && item.children.length > 0) {
+                        arr = arr.concat(this.renderCheck(item.children));
+                    }
+                })
+                return arr
             },
             deepCopy(data) {
                 var t = this.type(data),
