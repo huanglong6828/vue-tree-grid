@@ -12,9 +12,11 @@
 ## 自适应功能新增
     1. width 字段增加
     2. td总和大于容器宽宽度 出现滚动条 否则表格自适应  需要使用者下载组件后 修改源码中 document.body.clientWidth  修改为 document.getElementsByClassName('你的容器')[0].clientWidth
+    
 ## 新增默认选中
     1. _checked 字段增加
     2. 给data 项设置特殊 key _checked: true
+    
 ## API
 ### props
 | 属性        | 说明           | 类型  |
