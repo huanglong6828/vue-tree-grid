@@ -19,6 +19,12 @@
  2. 给data项设置特殊 key _checked: true
 ```    
     
+## 2.0 多选框
+``` bash
+ 1. 修改为元素checkbox 样式大概调整
+ 2. 如果样式不好看 可以自行修改或者使用其他组件ui checkbox
+```
+
 ## API
 ### props
 | 属性        | 说明           | 类型  |
