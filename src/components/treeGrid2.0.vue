@@ -12,43 +12,46 @@
             type: 'selection'为多选功能 type: 'action' 为操作功能 actions:[{}] 操作按钮
  -->
 <template>
-<div :style="{width:tableWidth}" class='autoTbale'>
-    <table class="table table-bordered" id='hl-tree-table'>
-        <thead>
-            <tr>
-                <th v-for="(column,index) in cloneColumns">
-                    <Checkbox :value.sync="checks" @click.prevent.native="handleCheckAll" v-if="column.type === 'selection'"></Checkbox>
-                      <label v-else>
+    <div :style="{width:tableWidth}" class='autoTbale'>
+        <table class="table table-bordered" id='hl-tree-table'>
+            <thead>
+                <tr>
+                    <th v-for="(column,index) in cloneColumns">
+                        <label v-if="column.type === 'selection'">
+                            <input type="checkbox" v-model="checks" @click="handleCheckAll">
+                        </label>
+                        <label v-else>
                         {{ renderHeader(column, index) }}
                         <span class="ivu-table-sort" v-if="column.sortable">
                             <Icon type="arrow-up-b" :class="{on: column._sortType === 'asc'}" @click.native="handleSort(index, 'asc')"/>
                             <Icon type="arrow-down-b" :class="{on: column._sortType === 'desc'}" @click.native="handleSort(index, 'desc')"/>
                         </span>
-                    </label>  
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr v-for="(item,index) in initItems" v-show="show(item)" :class="{'child-tr':item.parent}" >
-                <td v-for="(column,snum) in columns" :style=tdWidth(column.width)>
-                      <Checkbox-group v-model="checkGroup" @on-change="checkAllGroupChange" v-if="column.type === 'selection'">
-                        <Checkbox :label="item.id"><span style="display:none;">&nbsp;</span></Checkbox>
-                    </Checkbox-group>
-                    <div v-if="column.type === 'action'">
-                         <i-button :type="action.type" size="small" @click="RowClick(item,$event,index,action.text)" v-for='action in (column.actions)' :key='column.text'>{{action.text}}</i-button> 
-                    </div>
-                    <label @click="toggle(index,item)" v-if="!column.type">
+                    </label>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(item,index) in initItems" v-show="show(item)" :class="{'child-tr':item.parent}">
+                    <td v-for="(column,snum) in columns" :style=tdWidth(column.width)>
+                        <label v-if="column.type === 'selection'">
+                            <input type="checkbox" :value="item.id" v-model="checkGroup">
+                        </label>
+                        <div v-if="column.type === 'action'">
+                            <i-button :type="action.type" size="small" @click="RowClick(item,$event,index,action.text)" v-for='action in (column.actions)'
+                                :key='column.text'>{{action.text}}</i-button>
+                        </div>
+                        <label @click="toggle(index,item)" v-if="!column.type">
                         <span v-if='snum==1'>
                             <i v-html='item.spaceHtml'></i>
                             <i v-if="item.children&&item.children.length>0" class="ivu-icon" :class="{'ivu-icon-plus-circled':!item.expanded,'ivu-icon-minus-circled':item.expanded }"></i>
                             <i v-else class="ms-tree-space"></i>
                         </span> {{renderBody(item,column) }}
-                    </label>  
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+                    </label>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </template>
 <script>
     export default {
@@ -57,7 +60,7 @@
             columns: Array,
             items: {
                 type: Array,
-                default: function() {
+                default: function () {
                     return [];
                 }
             }
@@ -106,6 +109,9 @@
                     this.cloneColumns = this.makeColumns();
                 },
                 deep: true
+            },
+            checkGroup(data) {
+                this.checkAllGroupChange(data)
             },
         },
         mounted() {
@@ -171,7 +177,8 @@
                     }
                 } else if (t === 'object') {
                     for (let i in data) {
-                        if (i != 'spaceHtml' && i != 'parent' && i != 'level' && i != 'expanded' && i != 'isShow' && i != 'load') {
+                        if (i != 'spaceHtml' && i != 'parent' && i != 'level' && i != 'expanded' && i != 'isShow' && i !=
+                            'load') {
                             o[i] = this.makeData(data[i]);
                         }
                     }
@@ -277,13 +284,13 @@
             },
             //checkbox 全选 选择事件
             handleCheckAll() {
-                this.checks = !this.checks;
+                // this.checks = !this.checks;
                 if (this.checks) {
                     this.checkGroup = this.getArray(this.checkGroup.concat(this.All(this.items)))
                 } else {
                     this.checkGroup = []
                 }
-                this.$emit('on-selection-change', this.checkGroup)
+                // this.$emit('on-selection-change', this.checkGroup)
             },
             // 数组去重
             getArray(a) {
@@ -402,17 +409,17 @@
     .autoTbale {
         overflow: auto;
     }
-    
+
     table {
         width: 100%;
         border-spacing: 0;
         border-collapse: collapse;
     }
-    
+
     .table-bordered {
         border: 1px solid #EBEBEB;
     }
-    
+
     .table>tbody>tr>td,
     .table>tbody>tr>th,
     .table>thead>tr>td,
@@ -422,7 +429,7 @@
         padding: 8px;
         vertical-align: middle;
     }
-    
+
     .table-bordered>tbody>tr>td,
     .table-bordered>tbody>tr>th,
     .table-bordered>tfoot>tr>td,
@@ -431,28 +438,28 @@
     .table-bordered>thead>tr>th {
         border: 1px solid #e7e7e7;
     }
-    
+
     .table>thead>tr>th {
         border-bottom: 1px solid #DDD;
     }
-    
+
     .table-bordered>thead>tr>td,
     .table-bordered>thead>tr>th {
         background-color: #F5F5F6;
     }
-    
+
     #hl-tree-table>tbody>tr {
         background-color: #fbfbfb;
     }
-    
+
     #hl-tree-table>tbody>.child-tr {
         background-color: #fff;
     }
-    
+
     label {
         margin: 0 8px;
     }
-    
+
     .ms-tree-space {
         position: relative;
         top: 1px;
@@ -463,11 +470,11 @@
         width: 14px;
         height: 14px;
     }
-    
+
     .ms-tree-space::before {
         content: ""
     }
-    
+
     #hl-tree-table th>label {
         margin: 0;
     }
