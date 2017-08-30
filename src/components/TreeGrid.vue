@@ -294,7 +294,7 @@
                 return result;
             },
             checkAllGroupChange(data) {
-                if (data.length === this.items.length) {
+                if (this.dataLength > 0&&data.length === this.items.length) {
                     this.checks = true;
                 } else {
                     this.checks = false;
