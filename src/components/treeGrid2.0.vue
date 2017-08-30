@@ -306,7 +306,7 @@
                 return result;
             },
             checkAllGroupChange(data) {
-                if (data.length === this.dataLength) {
+                if (this.dataLength > 0 && data.length === this.dataLength) {
                     this.checks = true;
                 } else {
                     this.checks = false;
