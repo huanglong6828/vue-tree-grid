@@ -113,6 +113,9 @@
             checkGroup(data) {
                 this.checkAllGroupChange(data)
             },
+            checks() {
+                this.handleCheckAll()
+            }
         },
         mounted() {
             if (this.items) {
