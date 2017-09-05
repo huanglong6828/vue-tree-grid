@@ -481,4 +481,7 @@
     #hl-tree-table th>label {
         margin: 0;
     }
+    .btn_content button:not(:last-child) {
+        margin-right: 5px;
+    }
 </style>
