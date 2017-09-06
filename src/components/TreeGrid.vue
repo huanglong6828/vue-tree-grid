@@ -12,43 +12,43 @@
             type: 'selection'为多选功能 type: 'action' 为操作功能 actions:[{}] 操作按钮
  -->
 <template>
-<div :style="{width:tableWidth}" class='autoTbale'>
-<table class="table table-bordered" id='hl-tree-table'>
-    <thead>
-        <tr>
-            <th v-for="(index, column) in cloneColumns">
-                <Checkbox :checked.sync="checks" @click.prevent="handleCheckAll" v-if="column.type === 'selection'"></Checkbox>
-                <label v-else>
+    <div :style="{width:tableWidth}" class='autoTbale'>
+        <table class="table table-bordered" id='hl-tree-table'>
+            <thead>
+                <tr>
+                    <th v-for="(index, column) in cloneColumns">
+                        <Checkbox :checked.sync="checks" @click.prevent="handleCheckAll" v-if="column.type === 'selection'"></Checkbox>
+                        <label v-else>
                     {{{ renderHeader(column, $index) }}}
                     <span class="ivu-table-sort" v-if="column.sortable">
                         <Icon type="arrow-up-b" :class="{on: column._sortType === 'asc'}" @click="handleSort($index, 'asc')"></Icon>
                          <Icon type="arrow-down-b" :class="{on: column._sortType === 'desc'}" @click="handleSort($index, 'desc')"></Icon>
                     </span>
                 </label>
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr v-for="(index, item) in initItems" v-show="show(item)" :class="{'child-tr':item.parent}" >
-            <td v-for="column in columns" :style=tdWidth(column.width)>
-                <Checkbox-group :model.sync="checkGroup" @on-change="checkAllGroupChange" v-if="column.type === 'selection'">
-                    <Checkbox :value="item.id"><span style="display:none;">&nbsp;</span></Checkbox>
-                </Checkbox-group>
-                <div v-if="column.type === 'action'">
-                    <i-button :type="action.type" size="small" @click="RowClick(item,index,$event,action.text)" v-for='action in column.actions'>{{action.text}}</i-button>
-                </div>
-                <label @click="toggle(index,item)" v-if="!column.type">
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(index, item) in initItems" v-show="show(item)" :class="{'child-tr':item.parent}">
+                    <td v-for="column in columns" :style=tdWidth(column.width)>
+                        <Checkbox-group :model.sync="checkGroup" @on-change="checkAllGroupChange" v-if="column.type === 'selection'">
+                            <Checkbox :value="item.id"><span style="display:none;">&nbsp;</span></Checkbox>
+                        </Checkbox-group>
+                        <div v-if="column.type === 'action'">
+                            <i-button :type="action.type" size="small" @click="RowClick(item,index,$event,action.text)" v-for='action in column.actions'>{{action.text}}</i-button>
+                        </div>
+                        <label @click="toggle(index,item)" v-if="!column.type">
                     <span v-if='$index==1'>
                         {{{item.spaceHtml}}}
                         <i v-if="item.children&&item.children.length>0" class="ivu-icon" :class="{'ivu-icon-plus-circled':!item.expanded,'ivu-icon-minus-circled':item.expanded }"></i>
                         <i v-else class="ms-tree-space"></i>
                     </span> {{{renderBody(item,column) }}}
                 </label>
-            </td>
-        </tr>
-    </tbody>
-</table>
-</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </template>
 <script>
     import Vue from 'vue'
@@ -145,13 +145,13 @@
                 this.$emit('on-sort-change', this.cloneColumns[index]['key'], this.cloneColumns[index]['_sortType'])
             },
             // 点击某一行事件
-            RowClick(data, event, index,text) {
+            RowClick(data, event, index, text) {
                 let result = this.makeData(data)
                 this.$emit('on-row-click', result, event, index, text)
             },
             // 点击事件 返回数据处理
             makeData(data) {
-                const t = typeOf(data);
+                const t = this.type(data);
                 let o;
                 if (t === 'array') {
                     o = [];
@@ -167,7 +167,8 @@
                     }
                 } else if (t === 'object') {
                     for (let i in data) {
-                        if (i != 'spaceHtml' && i != 'parent' && i != 'level' && i != 'expanded' && i != 'isShow' && i != 'load') {
+                        if (i != 'spaceHtml' && i != 'parent' && i != 'level' && i != 'expanded' && i != 'isShow' && i !=
+                            'load') {
                             o[i] = this.makeData(data[i]);
                         }
                     }
@@ -294,7 +295,7 @@
                 return result;
             },
             checkAllGroupChange(data) {
-                if (this.dataLength > 0&&data.length === this.items.length) {
+                if (this.dataLength > 0 && data.length === this.items.length) {
                     this.checks = true;
                 } else {
                     this.checks = false;
@@ -396,16 +397,17 @@
     .autoTbale {
         overflow: auto;
     }
+
     table {
-        width:100%;
+        width: 100%;
         border-spacing: 0;
         border-collapse: collapse;
     }
-    
+
     .table-bordered {
         border: 1px solid #EBEBEB;
     }
-    
+
     .table>tbody>tr>td,
     .table>tbody>tr>th,
     .table>thead>tr>td,
@@ -415,7 +417,7 @@
         padding: 8px;
         vertical-align: middle;
     }
-    
+
     .table-bordered>tbody>tr>td,
     .table-bordered>tbody>tr>th,
     .table-bordered>tfoot>tr>td,
@@ -424,28 +426,28 @@
     .table-bordered>thead>tr>th {
         border: 1px solid #e7e7e7;
     }
-    
+
     .table>thead>tr>th {
         border-bottom: 1px solid #DDD;
     }
-    
+
     .table-bordered>thead>tr>td,
     .table-bordered>thead>tr>th {
         background-color: #F5F5F6;
     }
-    
+
     #hl-tree-table>tbody>tr {
         background-color: #fbfbfb;
     }
-    
+
     #hl-tree-table>tbody>.child-tr {
         background-color: #fff;
     }
-    
+
     label {
         margin: 0 8px;
     }
-    
+
     .ms-tree-space {
         position: relative;
         top: 1px;
@@ -456,11 +458,11 @@
         width: 14px;
         height: 14px;
     }
-    
+
     .ms-tree-space::before {
         content: ""
     }
-    
+
     #hl-tree-table th>label {
         margin: 0;
     }
