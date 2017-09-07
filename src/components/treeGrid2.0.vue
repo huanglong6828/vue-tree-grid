@@ -289,7 +289,7 @@ export default {
         },
         //checkbox 全选 选择事件
         handleCheckAll() {
-            // this.checks = !this.checks;
+            this.checks = !this.checks;
             if (this.checks) {
                 this.checkGroup = this.getArray(this.checkGroup.concat(this.All(this.items)))
             } else {
