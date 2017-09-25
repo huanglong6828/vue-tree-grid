@@ -281,6 +281,7 @@ export default {
             if (item.children) {
                 item.children.forEach((child, childIndex) => {
                     child.isShow = false;
+                    child.expanded = false;
                     if (child.children) {
                         this.close(index + childIndex + 1, child);
                     }
