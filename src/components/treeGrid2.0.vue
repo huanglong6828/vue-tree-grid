@@ -40,7 +40,7 @@
                             <i-button :type="action.type" size="small" @click="RowClick(item,$event,index,action.text)" v-for='action in (column.actions)' :key="action.text">{{action.text}}</i-button>
                         </div>
                         <label @click="toggle(index,item)" v-if="!column.type">
-                            <span v-if='snum==1'>
+                            <span v-if='snum==iconRow()'>
                                 <i v-html='item.spaceHtml'></i>
                                 <i v-if="item.children&&item.children.length>0" class="ivu-icon" :class="{'ivu-icon-plus-circled':!item.expanded,'ivu-icon-minus-circled':item.expanded }"></i>
                                 <i v-else class="ms-tree-space"></i>
@@ -137,6 +137,15 @@ export default {
         }
     },
     methods: {
+      // 有无多选框折叠位置优化
+      iconRow() {
+        for (var i = 0, len = this.columns.length; i < len; i++) {
+          if (this.columns[i].type == 'selection') {
+            return 1
+          }
+        }
+        return 0
+      },
         // 设置td宽度,td的align
         tdStyle(column) {
             var style = {}
