@@ -175,7 +175,7 @@ export default {
         },
         // 点击事件 返回数据处理
         makeData(data) {
-            const t = typeOf(data);
+            const t = type(data);
             let o;
             if (t === 'array') {
                 o = [];
